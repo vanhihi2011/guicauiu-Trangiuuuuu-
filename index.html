@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100b22">
+  <title>Bảo Trang — tên 3D</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+      background: #100b22;
+      color: #fff8f5;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      background: #080511;
+    }
+
+    .birthday-gate[hidden],
+    .page[hidden] {
+      display: none;
+    }
+
+    .birthday-gate {
+      position: fixed;
+      z-index: 5;
+      inset: 0;
+      display: grid;
+      padding: 24px;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 45%, rgb(101 53 162 / 27%), transparent 42%),
+        radial-gradient(ellipse at 17% 83%, rgb(68 43 139 / 24%), transparent 43%),
+        linear-gradient(145deg, #10091d 0%, #090613 48%, #100820 100%);
+    }
+
+    .birthday-gate::before,
+    .birthday-gate::after {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      content: "";
+      border-radius: 50%;
+      background: #f5e9ff;
+      box-shadow:
+        8vw 13vh 1px #fff, 18vw 72vh 2px #c88dff,
+        27vw 30vh 1px #ead7ff, 41vw 86vh 1px #dcacff,
+        52vw 12vh 2px #fff, 67vw 77vh 1px #b58aff,
+        79vw 19vh 1px #fff, 92vw 54vh 2px #d4a0ff,
+        13vw 48vh 1px #d7baff, 88vw 89vh 1px #fff;
+      opacity: .75;
+      pointer-events: none;
+      animation: twinkle 3s ease-in-out infinite alternate;
+    }
+
+    .birthday-gate::before {
+      top: 0;
+      left: 0;
+    }
+
+    .birthday-gate::after {
+      right: 0;
+      bottom: 0;
+      opacity: .4;
+      animation-delay: -1.5s;
+    }
+
+    .gate-card {
+      position: relative;
+      width: min(100%, 390px);
+      padding: 38px 30px 32px;
+      border: 1px solid rgb(221 193 255 / 18%);
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgb(35 23 58 / 91%), rgb(19 14 35 / 94%));
+      box-shadow: 0 24px 90px rgb(3 1 12 / 45%), 0 0 50px rgb(153 99 235 / 12%);
+      text-align: center;
+      backdrop-filter: blur(14px);
+    }
+
+    .gate-heart {
+      display: grid;
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 20px;
+      place-items: center;
+      color: #f0c5ff;
+      font-size: 2.45rem;
+      line-height: 1;
+      filter: drop-shadow(0 0 12px rgb(195 133 255 / 62%));
+    }
+
+    .gate-title {
+      margin: 0;
+      color: #fff8ff;
+      font-size: clamp(1.45rem, 5vw, 1.8rem);
+      font-weight: 650;
+      letter-spacing: -.035em;
+    }
+
+    .gate-description {
+      margin: 11px 0 24px;
+      color: #c2b5d5;
+      font-size: .94rem;
+      line-height: 1.6;
+    }
+
+    .gate-label {
+      display: block;
+      margin: 0 0 9px;
+      color: #e4d7f4;
+      font-size: .86rem;
+      text-align: left;
+    }
+
+    .gate-date {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 13px;
+      border: 1px solid rgb(211 185 244 / 24%);
+      border-radius: 12px;
+      outline: none;
+      background: rgb(8 6 19 / 55%);
+      color: #fff8ff;
+      font: inherit;
+      color-scheme: dark;
+    }
+
+    .gate-date:focus-visible {
+      border-color: #c99af6;
+      box-shadow: 0 0 0 3px rgb(173 119 236 / 18%);
+    }
+
+    .gate-submit {
+      width: 100%;
+      min-height: 47px;
+      margin-top: 15px;
+      border: 1px solid rgb(231 205 255 / 34%);
+      border-radius: 12px;
+      background: linear-gradient(100deg, #8758ba, #a56ccd);
+      color: white;
+      font: inherit;
+      font-size: .94rem;
+      font-weight: 650;
+      box-shadow: 0 8px 24px rgb(116 68 167 / 25%);
+      cursor: pointer;
+      transition: filter .2s ease, transform .2s ease;
+    }
+
+    .gate-submit:hover {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+    }
+
+    .gate-submit:focus-visible {
+      outline: 2px solid #f1e2ff;
+      outline-offset: 3px;
+    }
+
+    .gate-error {
+      min-height: 1.35em;
+      margin: 11px 0 0;
+      color: #ffb8d0;
+      font-size: .84rem;
+      line-height: 1.5;
+    }
+
+    .page {
+      position: relative;
+      display: grid;
+      min-height: 100svh;
+      place-items: center;
+      isolation: isolate;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 51%, rgb(46 22 86 / 18%), transparent 33%),
+        radial-gradient(ellipse at 15% 23%, rgb(110 45 183 / 24%), transparent 37%),
+        radial-gradient(ellipse at 83% 75%, rgb(89 38 172 / 26%), transparent 38%),
+        radial-gradient(ellipse at 50% 108%, rgb(40 23 105 / 40%), transparent 45%),
+        linear-gradient(145deg, #10091d 0%, #090613 48%, #100820 100%);
+    }
+
+    .page::before,
+    .page::after {
+      position: absolute;
+      z-index: -1;
+      width: 2px;
+      height: 2px;
+      content: "";
+      background: #fff;
+      border-radius: 50%;
+      box-shadow:
+        7vw 15vh 1px #fff8f5, 16vw 78vh 2px #c88dff,
+        24vw 27vh 1px #fff8f5, 36vw 84vh 1px #dcacff,
+        43vw 13vh 2px #fff8f5, 56vw 76vh 1px #b58aff,
+        68vw 18vh 1px #fff8f5, 79vw 70vh 2px #d4a0ff,
+        91vw 24vh 1px #fff8f5, 94vw 88vh 1px #c18bff,
+        12vw 46vh 1px #d7baff, 84vw 49vh 1px #fff8f5,
+        31vw 61vh 2px #a970ff, 62vw 38vh 1px #f2ddff,
+        4vw 92vh 1px #d4a0ff, 74vw 94vh 2px #fff8f5,
+        53vw 8vh 1px #c18bff, 28vw 7vh 1px #fff8f5;
+      opacity: .78;
+      pointer-events: none;
+      animation: twinkle 3s ease-in-out infinite alternate;
+    }
+
+    .page::before {
+      top: 0;
+      left: 0;
+    }
+
+    .page::after {
+      right: 3%;
+      bottom: 8%;
+      opacity: .42;
+      transform: scale(1.55);
+      animation-delay: -1.6s;
+    }
+
+    .content {
+      position: relative;
+      width: 100%;
+      min-height: 100svh;
+      text-align: center;
+    }
+
+    .stage {
+      position: relative;
+      display: grid;
+      width: 100%;
+      min-height: 100svh;
+      place-items: center;
+      perspective: 850px;
+      perspective-origin: 50% 50%;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .nebula {
+      position: absolute;
+      width: min(120vw, 1100px);
+      aspect-ratio: 1.65;
+      border-radius: 50%;
+      background:
+        conic-gradient(
+          from 12deg,
+          transparent 0deg,
+          rgb(156 101 255 / 5%) 28deg,
+          rgb(186 131 255 / 23%) 54deg,
+          transparent 91deg,
+          rgb(126 77 236 / 15%) 145deg,
+          transparent 190deg,
+          rgb(190 139 255 / 19%) 238deg,
+          transparent 287deg,
+          rgb(139 89 236 / 13%) 325deg,
+          transparent 360deg
+        );
+      filter: blur(28px);
+      opacity: .8;
+      transform: rotate(-18deg);
+      pointer-events: none;
+      animation: nebula-drift 48s ease-in-out infinite alternate;
+      -webkit-mask-image: radial-gradient(ellipse, transparent 0 13%, #000 29% 56%, transparent 76%);
+      mask-image: radial-gradient(ellipse, transparent 0 13%, #000 29% 56%, transparent 76%);
+    }
+
+    .stage:active {
+      cursor: grabbing;
+    }
+
+    .love-rain {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .love-note {
+      position: absolute;
+      top: -3rem;
+      left: var(--left);
+      color: rgb(224 194 255 / 78%);
+      font-size: clamp(.62rem, 1.8vw, .82rem);
+      font-weight: 500;
+      letter-spacing: .035em;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      text-shadow: 0 0 12px rgb(172 114 255 / 68%);
+      opacity: 0;
+      animation: love-fall var(--duration) linear var(--delay) infinite;
+      will-change: transform, opacity;
+    }
+
+    .love-note--small {
+      font-size: clamp(.52rem, 1.45vw, .68rem);
+      color: rgb(212 184 255 / 70%);
+    }
+
+    .glow {
+      position: absolute;
+      width: min(83vw, 780px);
+      height: min(45vw, 340px);
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse, rgb(203 151 255 / 27%), rgb(135 79 226 / 16%) 37%, rgb(77 42 150 / 9%) 57%, transparent 73%);
+      filter: blur(25px);
+      pointer-events: none;
+    }
+
+    .model {
+      --tilt-x: -12deg;
+      --tilt-y: -20deg;
+      position: relative;
+      z-index: 1;
+      font-family: "Segoe UI", "Arial", sans-serif;
+      font-size: clamp(3.35rem, 12vw, 8.3rem);
+      font-weight: 800;
+      letter-spacing: -.065em;
+      line-height: 1;
+      transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+      transform-style: preserve-3d;
+      will-change: transform;
+      animation: arrive 1.4s cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    .model.is-dragging {
+      animation: none;
+    }
+
+    .lettering {
+      position: relative;
+      display: block;
+      padding: .08em .12em .2em;
+      color: #fff8f5;
+      white-space: nowrap;
+      backface-visibility: hidden;
+      -webkit-text-stroke: 1px rgb(255 241 250 / 75%);
+      text-shadow:
+        0 1px 0 #f7c9e2,
+        0 2px 0 #e7a9ce,
+        0 3px 0 #d995c0,
+        0 4px 0 #bd79ae,
+        0 5px 0 #9c629f,
+        0 6px 0 #75518f,
+        0 7px 0 #59447c,
+        0 8px 0 #453965,
+        0 9px 0 #342d51,
+        0 10px 0 #282440,
+        0 11px 0 #201d35,
+        0 12px 0 #17172a,
+        0 23px 26px rgb(7 5 19 / 73%),
+        0 0 22px rgb(194 139 255 / 52%),
+        0 0 58px rgb(144 91 255 / 32%);
+      transform: translateZ(0);
+    }
+
+    .extrusion {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      pointer-events: none;
+    }
+
+    .side-layer {
+      position: absolute;
+      inset: 0;
+      color: #69469d;
+      font: inherit;
+      letter-spacing: inherit;
+      line-height: inherit;
+      white-space: nowrap;
+      backface-visibility: hidden;
+      -webkit-text-stroke: .5px #986bd3;
+      transform: translateZ(calc(var(--layer) * -1px));
+    }
+
+    .back-face {
+      position: absolute;
+      inset: 0;
+      color: #d3a8ff;
+      text-shadow:
+        0 1px 0 #af7bea,
+        0 2px 0 #8557c5,
+        0 3px 0 #624094,
+        0 12px 18px rgb(8 4 22 / 65%);
+      transform: translateZ(-24px) rotateY(180deg);
+    }
+
+    .lettering::after {
+      position: absolute;
+      inset: 5% 0 auto;
+      height: 45%;
+      content: "Bảo Trang";
+      color: transparent;
+      background: linear-gradient(180deg, rgb(255 255 255 / 35%), transparent);
+      background-clip: text;
+      pointer-events: none;
+    }
+
+    @keyframes love-fall {
+      0% {
+        opacity: 0;
+        transform: translate3d(-50%, -4vh, 0) rotate(-8deg);
+      }
+      12% {
+        opacity: .8;
+      }
+      82% {
+        opacity: .65;
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(calc(-50% + var(--drift)), 112vh, 0) rotate(8deg);
+      }
+    }
+
+    @keyframes twinkle {
+      from {
+        opacity: .45;
+        filter: brightness(.8);
+      }
+      to {
+        opacity: 1;
+        filter: brightness(1.5);
+      }
+    }
+
+    @keyframes nebula-drift {
+      from {
+        rotate: -8deg;
+        scale: .96;
+      }
+      to {
+        rotate: 8deg;
+        scale: 1.04;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="birthday-gate" id="birthday-gate" aria-labelledby="gate-title">
+    <form class="gate-card" id="birthday-form">
+      <div class="gate-heart" aria-hidden="true">♥</div>
+      <h1 class="gate-title" id="gate-title">Một chút bất ngờ dành cho cậu</h1>
+      <p class="gate-description">Hãy nhập mật khẩu để mở để mở bất ngờ cậu iuu nì</p>
+      <label class="gate-label" for="birthday-input">Mk là sn của cậu đoá</label>
+      <input
+        class="gate-date"
+        id="birthday-input"
+        name="birthday"
+        type="text"
+        inputmode="text"
+        autocomplete="off"
+        spellcheck="false"
+        required
+        aria-describedby="gate-error"
+      >
+      <button class="gate-submit" type="submit">Mở món quà ✨</button>
+      <p class="gate-error" id="gate-error" role="alert" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <main class="page" id="birthday-page" hidden>
+    <section class="content" aria-label="Tên Bảo Trang 3D" tabindex="-1">
+      <div class="stage" id="stage" aria-label="Kéo để xoay tên Bảo Trang 360 độ." role="img">
+        <div class="love-rain" id="love-rain" aria-hidden="true"></div>
+        <div class="nebula" aria-hidden="true"></div>
+        <div class="glow" aria-hidden="true"></div>
+        <div class="model" id="model" aria-hidden="true">
+          <div class="lettering">Bảo Trang</div>
+          <div class="lettering back-face">Bảo Trang</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const birthdayGate = document.querySelector("#birthday-gate");
+    const birthdayForm = document.querySelector("#birthday-form");
+    const birthdayInput = document.querySelector("#birthday-input");
+    const birthdayError = document.querySelector("#gate-error");
+    const birthdayPage = document.querySelector("#birthday-page");
+    const birthdayContent = birthdayPage.querySelector(".content");
+
+    birthdayForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (birthdayInput.value.trim() !== "26/5/2011") {
+        birthdayError.textContent = "Ngày sinh chưa đúng, thử lại nhé.";
+        birthdayInput.focus();
+        return;
+      }
+
+      birthdayGate.hidden = true;
+      birthdayPage.hidden = false;
+      birthdayContent.focus();
+    });
+
+    birthdayInput.addEventListener("input", () => {
+      birthdayError.textContent = "";
+    });
+
+    const stage = document.querySelector("#stage");
+    const model = document.querySelector("#model");
+    const loveRain = document.querySelector("#love-rain");
+    const loveMessages = [
+      "tớ yêu cậu nhìu",
+      "tớ yêu cậu",
+      "yêu Bảo Trang",
+      "muốn yêu cậu mãi mãi"
+    ];
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let rotationX = -12;
+    let rotationY = -20;
+    let pointerId = null;
+    let lastX = 0;
+    let lastY = 0;
+    let previousFrame = 0;
+
+    for (let depth = 24; depth >= 1; depth -= 1) {
+      const layer = document.createElement("span");
+      layer.className = "side-layer";
+      layer.textContent = "Bảo Trang";
+      layer.style.setProperty("--layer", String(depth));
+      model.prepend(layer);
+    }
+
+    if (!reducedMotion) {
+      for (let index = 0; index < 40; index += 1) {
+        const note = document.createElement("span");
+        const message = loveMessages[index % loveMessages.length];
+        note.className = message === "muốn yêu cậu mãi mãi"
+          ? "love-note love-note--small"
+          : "love-note";
+        note.textContent = message;
+        note.style.setProperty("--left", `${8 + Math.random() * 84}%`);
+        note.style.setProperty("--duration", `${14 + Math.random() * 12}s`);
+        note.style.setProperty("--delay", `${-Math.random() * 24}s`);
+        note.style.setProperty("--drift", `${Math.round(Math.random() * 80 - 40)}px`);
+        loveRain.append(note);
+      }
+    }
+
+    function renderRotation() {
+      model.style.setProperty("--tilt-x", `${rotationX}deg`);
+      model.style.setProperty("--tilt-y", `${rotationY}deg`);
+    }
+
+    function animate(time) {
+      if (!reducedMotion && pointerId === null && previousFrame !== 0) {
+        rotationY += (time - previousFrame) * 0.012;
+        renderRotation();
+      }
+      previousFrame = time;
+      window.requestAnimationFrame(animate);
+    }
+
+    window.requestAnimationFrame(animate);
+
+    stage.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0 && event.pointerType === "mouse") return;
+      pointerId = event.pointerId;
+      lastX = event.clientX;
+      lastY = event.clientY;
+      stage.setPointerCapture(pointerId);
+      model.classList.add("is-dragging");
+    });
+
+    stage.addEventListener("pointermove", (event) => {
+      if (event.pointerId !== pointerId) return;
+      rotationY += (event.clientX - lastX) * 0.55;
+      rotationX -= (event.clientY - lastY) * 0.45;
+      rotationX = Math.max(-85, Math.min(85, rotationX));
+      lastX = event.clientX;
+      lastY = event.clientY;
+      renderRotation();
+    });
+
+    function endDrag(event) {
+      if (event.pointerId !== pointerId) return;
+      pointerId = null;
+      model.classList.remove("is-dragging");
+    }
+
+    stage.addEventListener("pointerup", endDrag);
+    stage.addEventListener("pointercancel", endDrag);
+    stage.addEventListener("lostpointercapture", () => {
+      pointerId = null;
+      model.classList.remove("is-dragging");
+    });
+  </script>
+</body>
+</html>
